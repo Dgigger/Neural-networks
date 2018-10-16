@@ -1,12 +1,12 @@
 // Lab1.cpp: определяет точку входа для консольного приложения.
+// Lab1.cpp: defining the entry point for the console application.
 //
-//1.Однослойная нейронная сеть
-//Булева функция:
+//1.Single-layer neural network
+//Boolean function:
 //(x1+x2)x3+x4
 //
 
 #include "stdafx.h"
-//#include "math.h"
 #include "stdio.h"
 #include "iostream"
 #include "locale.h"
@@ -23,7 +23,7 @@ struct SynapWeights
 	float w[5];
 };
 
-bool SetFuncValue(BinaryEnters values)//Забиваем один набор значений
+bool SetFuncValue(BinaryEnters values)//Entering one set of values
 {
 	bool F = (values.x[3] + values.x[2])*values.x[1] + values.x[0];
 	return F;
@@ -31,7 +31,7 @@ bool SetFuncValue(BinaryEnters values)//Забиваем один набор значений
 
 bool CheckBoolFuncValue(bool BoolFuncValue[16], bool OriginalBoolFuncValue[16])
 {
-	//сравнение значений функции с оригиналом
+	//A comparison of the values of the function with original
 	bool check = 0;
 	for (int i = 0; i < 16; i++)
 	{
@@ -90,10 +90,10 @@ float dF(int FA, float net)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	setlocale(LC_ALL, "Russian");
-	bool OriginalBoolFuncValue[16]; //Истинные значения функции на заданном наборе
-	BinaryEnters BinEnters[16]; //Наборы значений для функции
+	bool OriginalBoolFuncValue[16]; //True values of the function on this set
+	BinaryEnters BinEnters[16]; //Value sets of the function
 
-	//Забиваем наборы и выводим на них значения функции
+	//Setting values and printing the corresponding values of the function
 	for (char i = 0; i < 16; i++)
 	{
 		for (char j = 3; j >= 0; j--)
@@ -104,27 +104,32 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 
-	//Синаптические веса:
+	//Synaptic weights:
 	SynapWeights SynWeights[2];
-	//SynWeights[0]-веса текущей итерации
-	//SynWeights[1]-веса следующей итерации
+	//SynWeights[0]-weights of the current iteration
+	//SynWeights[1]-weights of the next iteration
 
-	//Забивваем начальные значения весов
+	//Setting values of weights
 	for (int i = 0; i <= 4; i++)
 	{
 		SynWeights[0].w[i] = 0;
 		SynWeights[1].w[i] = 0;
 	}
 
-	//Выходной сигнал
+	//Output signal
 	bool Y[16];
-	float net = 0;
-	const float Tetta = 0.25; //Норма обучения
-	int E = 0;				 //Суммарная квадратичная ошибка
-	float out = 0;			 //Сеевой выход
-	float Sygma = 0;		 //Ошибка
+	float net = 0;				//Сетевой вход
+								//Net input
+	const float Tetta = 0.25;	//Норма обучения
+								//The rate of learning
+	int E = 0;					//Суммарная квадратичная ошибка
+								//The total squared error
+	float out = 0;				//Сетевой выход
+								//Net output
+	float Sygma = 0;			//Ошибка
+								//Error
 	float DeltaW = 0;
-	float derivative = 0;	 //Производная ФА
+	float derivative = 0;		//Производная ФА
 	bool test = 0;
 
 	cout << "Выберите пороговую функцию:" << endl;
@@ -157,8 +162,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	default: cout << "Ошибка в выборе функции активации.";
 	}
 
-	//1 Случай
-	//Используем все комбинации переменных x1,x2,x3,x4 
+	//1 case
+	//Using all combinations of variables x1,x2,x3,x4 
 	//
 	cout << endl << "Выберите вариант обучения:" << endl;
 	cout << "1.С использованием всех комбинаций переменных x1,x2,x3,x4" << endl;
@@ -167,7 +172,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	do{
 		cin >> variant;
 	} while ((variant != 1) && (variant != 2));
-	int inc = 0; //Макс количество эпох
+	int inc = 0; //Max count of eras
 
 	if (variant == 1)
 	{
@@ -194,7 +199,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						SynWeights[1].w[i] = SynWeights[0].w[i] + DeltaW;
 						SynWeights[0].w[i] = SynWeights[1].w[i];
 					}
-					//Пересчитываем вес нейрона смещения
+					//Recalculating the weight of the displacement neuron
 					DeltaW = Tetta*Sygma*derivative;
 					SynWeights[1].w[4] = SynWeights[0].w[4] + DeltaW;
 					SynWeights[0].w[4] = SynWeights[1].w[4];
@@ -221,7 +226,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	else
 	{
 		//2 Случай
-		//Используем часть переменных для обучения НС, а другую часть для её тестирования
+		//Using one part of variables for teaching neuronet and the second one for testing 
 		//
 		do
 		{
@@ -246,7 +251,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						SynWeights[1].w[i] = SynWeights[0].w[i] + DeltaW;
 						SynWeights[0].w[i] = SynWeights[1].w[i];
 					}
-					//Пересчитываем вес нейрона смещения
+					//Recalculating the weight of the displacement neuron
 					DeltaW = Tetta*Sygma*derivative;
 					SynWeights[1].w[4] = SynWeights[0].w[4] + DeltaW;
 					SynWeights[0].w[4] = SynWeights[1].w[4];
@@ -270,7 +275,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			inc++;
 		} while ((E != 0) && (inc != 100));
 		//
-		//Тестируем НС
+		//Testing our neuronet
 		//
 		cout << "Подаем на НС для тестирования остальные вектора значений:" << endl;
 		for (int k = 11; k <= 15; k++)
